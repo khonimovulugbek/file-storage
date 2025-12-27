@@ -4,6 +4,7 @@ import com.file_storage.application.port.out.storage.EncryptionPort;
 import com.file_storage.domain.model.storage.EncryptedData;
 import com.file_storage.domain.model.storage.EncryptionKey;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 @Slf4j
+@Primary
 public class AesEncryptionAdapter implements EncryptionPort {
     
     private static final String ALGORITHM = "AES/GCM/NoPadding";

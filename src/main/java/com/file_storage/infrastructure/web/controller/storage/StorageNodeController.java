@@ -34,6 +34,8 @@ public class StorageNodeController {
                     .totalCapacityGb(request.totalCapacityGb())
                     .usedCapacityGb(0L)
                     .fileCount(0L)
+                    .accessKey(request.accessKey())
+                    .secretKey(request.secretKey())
                     .status(StorageNode.NodeStatus.valueOf(request.status()))
                     .healthCheckUrl(request.healthCheckUrl())
                     .lastHealthCheck(null)
@@ -153,6 +155,8 @@ public class StorageNodeController {
             String nodeId,
             String storageType,
             String nodeUrl,
+            String accessKey,
+            String secretKey,
             Long totalCapacityGb,
             String status,
             String healthCheckUrl

@@ -28,7 +28,6 @@ import java.util.UUID;
  * PRODUCTION: Replace with AWS KMS, HashiCorp Vault, or Azure Key Vault
  */
 @Component
-@Primary
 @RequiredArgsConstructor
 @Slf4j
 public class DatabaseEncryptionAdapter implements EncryptionPort {

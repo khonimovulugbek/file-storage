@@ -80,5 +80,8 @@ minio:
   endpoint: http://localhost:9000
 
 # Encryption configuration
+# IMPORTANT: Generate a secure master key for production using:
+# openssl rand -base64 32
+# Store the key securely (e.g., AWS Secrets Manager, HashiCorp Vault)
 encryption:
-  master-key: "CHANGE_THIS_IN_PRODUCTION_32_CHARS_BASE64_ENCODED_KEY="
+  master-key: "YXNkZmFzZGZhc2RmYXNkZmFzZGZhc2RmYXNkZmFzZGY="  # CHANGE IN PRODUCTION!

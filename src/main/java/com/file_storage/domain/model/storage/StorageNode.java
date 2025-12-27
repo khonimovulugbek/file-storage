@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
  * Used for horizontal scaling - multiple nodes can be registered
  */
 @Builder
-public record StorageNode(String nodeId, StorageType storageType, String nodeUrl, Long totalCapacityGb,
-                          Long usedCapacityGb, Long fileCount, NodeStatus status, String healthCheckUrl,
-                          LocalDateTime lastHealthCheck) {
-    public StorageNode(String nodeId, StorageType storageType, String nodeUrl,
-                       Long totalCapacityGb, Long usedCapacityGb, Long fileCount,
+public record StorageNode(String nodeId, StorageType storageType, String nodeUrl, String accessKey,
+                          String secretKey, Long totalCapacityGb, Long usedCapacityGb, Long fileCount,
+                          NodeStatus status, String healthCheckUrl, LocalDateTime lastHealthCheck) {
+    public StorageNode(String nodeId, StorageType storageType, String nodeUrl, String accessKey,
+                       String secretKey, Long totalCapacityGb, Long usedCapacityGb, Long fileCount,
                        NodeStatus status, String healthCheckUrl, LocalDateTime lastHealthCheck) {
         if (nodeId == null || nodeId.isBlank()) {
             throw new IllegalArgumentException("Node ID cannot be null or empty");
@@ -31,6 +31,8 @@ public record StorageNode(String nodeId, StorageType storageType, String nodeUrl
         this.nodeId = nodeId;
         this.storageType = storageType;
         this.nodeUrl = nodeUrl;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
         this.totalCapacityGb = totalCapacityGb;
         this.usedCapacityGb = usedCapacityGb != null ? usedCapacityGb : 0L;
         this.fileCount = fileCount != null ? fileCount : 0L;

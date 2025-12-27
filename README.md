@@ -444,11 +444,32 @@ docker-compose logs -f app
 
 ## 🔒 Security
 
-- JWT-based authentication
-- Password encryption with BCrypt
-- HTTPS recommended for production
-- CORS configuration for web clients
-- Rate limiting (recommended for production)
+- **JWT-based authentication** - Access and refresh tokens
+- **Password encryption** - BCrypt hashing
+- **Credential encryption** - AES-256-GCM encryption for storage node credentials at rest
+- **HTTPS recommended** for production
+- **CORS configuration** for web clients
+- **Rate limiting** (recommended for production)
+
+### Credential Encryption
+
+Storage node credentials (access keys and secret keys) are automatically encrypted at rest using AES-256-GCM encryption. See [`CREDENTIAL_ENCRYPTION.md`](CREDENTIAL_ENCRYPTION.md) for details.
+
+**Quick Setup:**
+```bash
+# Generate a secure master key
+java -cp build/libs/file-storage.jar com.file_storage.infrastructure.security.EncryptionKeyGenerator
+
+# Set as environment variable
+export ENCRYPTION_MASTER_KEY="your-generated-key"
+```
+
+**Features:**
+- ✅ Automatic encryption/decryption during persistence
+- ✅ AES-256-GCM with authenticated encryption
+- ✅ Unique IV per encryption operation
+- ✅ Transparent to application logic
+- ⚠️ For production: Use AWS KMS, Azure Key Vault, or HashiCorp Vault
 
 ## 📈 Performance & Scalability
 
@@ -480,6 +501,7 @@ docker-compose logs -f app
 - **[Deployment Guide](DEPLOYMENT_GUIDE.md)** - Complete deployment instructions
 - **[Hexagonal Architecture](HEXAGONAL_ARCHITECTURE_SUMMARY.md)** - Clean architecture principles
 - **[Scalability Summary](SCALABILITY_IMPLEMENTATION_SUMMARY.md)** - Implementation details
+- **[Credential Encryption](CREDENTIAL_ENCRYPTION.md)** - Storage node credential security
 
 ## 🎯 Use Cases
 
