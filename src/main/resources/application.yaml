@@ -76,12 +76,5 @@ spring:
     redis:
       host: redis
 
-minio:
-  endpoint: http://localhost:9000
-
-# Encryption configuration
-# IMPORTANT: Generate a secure master key for production using:
-# openssl rand -base64 32
-# Store the key securely (e.g., AWS Secrets Manager, HashiCorp Vault)
 encryption:
   master-key: "YXNkZmFzZGZhc2RmYXNkZmFzZGZhc2RmYXNkZmFzZGY="  # CHANGE IN PRODUCTION!
