@@ -1,0 +1,597 @@
+{
+	"info": {
+		"_postman_id": "file-storage-api-collection",
+		"name": "File Storage API",
+		"description": "Complete API collection for File Storage System with upload, download, and presigned URL generation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "file_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "123e4567-e89b-12d3-a456-426614174000",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "File Storage",
+			"item": [
+				{
+					"name": "Upload File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.fileId) {",
+									"        pm.collectionVariables.set('file_id', response.data.fileId);",
+									"        console.log('File ID saved:', response.data.fileId);",
+									"    }",
+									"}",
+									"",
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has success flag', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});",
+									"",
+									"pm.test('Response contains file data', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('fileId');",
+									"    pm.expect(jsonData.data).to.have.property('fileName');",
+									"    pm.expect(jsonData.data).to.have.property('checksum');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "storageType",
+									"value": "MINIO",
+									"description": "Optional: MINIO, S3, or SFTP",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/storage/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"upload"
+							]
+						},
+						"description": "Upload a file to the storage system. The file will be stored in the selected storage backend (MinIO, S3, or SFTP). The system automatically:\n- Calculates SHA-256 checksum\n- Checks for deduplication\n- Encrypts storage path\n- Selects optimal storage node"
+					},
+					"response": [
+						{
+							"name": "Upload Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/storage/upload",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"storage",
+										"upload"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"File uploaded successfully\",\n    \"data\": {\n        \"fileId\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"fileName\": \"document.pdf\",\n        \"fileSize\": 1048576,\n        \"contentType\": \"application/pdf\",\n        \"checksum\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\n        \"storageNodeId\": \"minio-node-1\",\n        \"uploadedAt\": \"2025-12-27T08:30:00\",\n        \"deduplicated\": false\n    },\n    \"timestamp\": \"2025-12-27T08:30:00\"\n}"
+						},
+						{
+							"name": "Upload Deduplicated",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/storage/upload",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"storage",
+										"upload"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"File already exists (deduplicated)\",\n    \"data\": {\n        \"fileId\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"fileName\": \"document.pdf\",\n        \"fileSize\": 1048576,\n        \"contentType\": \"application/pdf\",\n        \"checksum\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\n        \"storageNodeId\": \"minio-node-1\",\n        \"uploadedAt\": \"2025-12-27T08:30:00\",\n        \"deduplicated\": true\n    },\n    \"timestamp\": \"2025-12-27T08:30:00\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Upload File to S3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.fileId) {",
+									"        pm.collectionVariables.set('file_id', response.data.fileId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "storageType",
+									"value": "S3",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/storage/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"upload"
+							]
+						},
+						"description": "Upload file specifically to AWS S3 storage backend"
+					},
+					"response": []
+				},
+				{
+					"name": "Upload File to SFTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.fileId) {",
+									"        pm.collectionVariables.set('file_id', response.data.fileId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "storageType",
+									"value": "SFTP",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/storage/upload",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"upload"
+							]
+						},
+						"description": "Upload file specifically to SFTP storage backend"
+					},
+					"response": []
+				},
+				{
+					"name": "Download File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Content-Disposition header exists', function () {",
+									"    pm.response.to.have.header('Content-Disposition');",
+									"});",
+									"",
+									"pm.test('X-File-Checksum header exists', function () {",
+									"    pm.response.to.have.header('X-File-Checksum');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/storage/download/{{file_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"download",
+								"{{file_id}}"
+							]
+						},
+						"description": "Download a file by its ID. The file is streamed directly to the client with proper headers:\n- Content-Disposition: attachment\n- Content-Type: original file type\n- Content-Length: file size\n- X-File-Checksum: SHA-256 hash\n\nThe system automatically:\n- Verifies user authorization\n- Decrypts storage path\n- Resolves storage node\n- Streams file content"
+					},
+					"response": [
+						{
+							"name": "Download Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/storage/download/550e8400-e29b-41d4-a716-446655440000",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"storage",
+										"download",
+										"550e8400-e29b-41d4-a716-446655440000"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Disposition",
+									"value": "attachment; filename=\"document.pdf\""
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/pdf"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1048576"
+								},
+								{
+									"key": "X-File-Checksum",
+									"value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+								}
+							],
+							"cookie": [],
+							"body": "[Binary file content]"
+						}
+					]
+				},
+				{
+					"name": "Generate Download URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response contains download URL', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('downloadUrl');",
+									"    pm.expect(jsonData.data.downloadUrl).to.be.a('string');",
+									"    pm.expect(jsonData.data.downloadUrl).to.include('http');",
+									"});",
+									"",
+									"pm.test('Response contains expiration info', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('expiresIn');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/storage/download-url/{{file_id}}?expiresIn=300",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"download-url",
+								"{{file_id}}"
+							],
+							"query": [
+								{
+									"key": "expiresIn",
+									"value": "300",
+									"description": "URL expiration time in seconds (default: 300)"
+								}
+							]
+						},
+						"description": "Generate a presigned download URL for direct access to the file. This is useful for:\n- CDN integration\n- Client-side downloads\n- Sharing files temporarily\n\nThe URL expires after the specified time (default: 5 minutes).\n\nNote: Only works for S3 and MinIO storage backends. SFTP does not support presigned URLs."
+					},
+					"response": [
+						{
+							"name": "Generate URL Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/storage/download-url/550e8400-e29b-41d4-a716-446655440000?expiresIn=300",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"storage",
+										"download-url",
+										"550e8400-e29b-41d4-a716-446655440000"
+									],
+									"query": [
+										{
+											"key": "expiresIn",
+											"value": "300"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Download URL generated\",\n    \"data\": {\n        \"fileId\": \"550e8400-e29b-41d4-a716-446655440000\",\n        \"downloadUrl\": \"https://minio.example.com/files/document.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=...\",\n        \"expiresIn\": 300\n    },\n    \"timestamp\": \"2025-12-27T08:30:00\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Generate Download URL (1 hour)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/storage/download-url/{{file_id}}?expiresIn=3600",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"storage",
+								"download-url",
+								"{{file_id}}"
+							],
+							"query": [
+								{
+									"key": "expiresIn",
+									"value": "3600",
+									"description": "1 hour = 3600 seconds"
+								}
+							]
+						},
+						"description": "Generate a presigned URL that expires in 1 hour"
+					},
+					"response": []
+				}
+			],
+			"description": "File storage operations: upload, download, and presigned URL generation"
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Check application health status"
+					},
+					"response": []
+				},
+				{
+					"name": "Metrics",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/metrics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"actuator",
+								"metrics"
+							]
+						},
+						"description": "View application metrics"
+					},
+					"response": []
+				},
+				{
+					"name": "Prometheus Metrics",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/actuator/prometheus",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"actuator",
+								"prometheus"
+							]
+						},
+						"description": "Prometheus-formatted metrics endpoint"
+					},
+					"response": []
+				}
+			],
+			"description": "Application health and monitoring endpoints"
+		}
+	]
+}
