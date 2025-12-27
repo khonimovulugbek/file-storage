@@ -1,22 +1,17 @@
 package com.file_storage.domain.model.storage;
 
 import lombok.Builder;
-import lombok.Getter;
+
+import java.util.UUID;
 
 /**
  * Aggregate Root for File domain
  * Encapsulates all file-related data and business rules
  */
-@Getter
 @Builder
-public class FileAggregate {
-    private final FileId fileId;
-    private final FileMetadata metadata;
-    private final StorageReference storageReference;
-    private final FileChecksum checksum;
-
-    public FileAggregate(FileId fileId, FileMetadata metadata, 
-                        StorageReference storageReference, FileChecksum checksum) {
+public record FileAggregate(FileId fileId, FileMetadata metadata, StorageReference storageReference,
+                            FileChecksum checksum) {
+    public FileAggregate {
         if (fileId == null) {
             throw new IllegalArgumentException("File ID cannot be null");
         }
@@ -30,10 +25,6 @@ public class FileAggregate {
             throw new IllegalArgumentException("File checksum cannot be null");
         }
 
-        this.fileId = fileId;
-        this.metadata = metadata;
-        this.storageReference = storageReference;
-        this.checksum = checksum;
     }
 
     /**
@@ -46,7 +37,7 @@ public class FileAggregate {
     /**
      * Domain rule: Check if user owns this file
      */
-    public boolean isOwnedBy(java.util.UUID userId) {
+    public boolean isOwnedBy(UUID userId) {
         return metadata.getOwnerId().equals(userId);
     }
 

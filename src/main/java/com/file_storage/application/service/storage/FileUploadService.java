@@ -65,11 +65,9 @@ public class FileUploadService implements UploadFileUseCase {
         
         StorageResult storageResult = fileStoragePort.store(command.fileContent(), context);
         
-        // 5. Encrypt storage path
-        MetadataEncryptionService.EncryptedPathResult encryptedPath = 
+        MetadataEncryptionService.EncryptedPathResult encryptedPath =
             encryptionService.encryptPath(storageResult.absolutePath());
         
-        // 6. Create storage reference (encrypted)
         StorageReference storageReference = StorageReference.builder()
             .storageType(selectedNode.storageType())
             .storageNodeId(selectedNode.nodeId())
@@ -79,7 +77,6 @@ public class FileUploadService implements UploadFileUseCase {
             .region(storageResult.region())
             .build();
         
-        // 7. Create file metadata
         FileMetadata metadata = FileMetadata.builder()
             .fileName(command.fileName())
             .contentType(command.contentType())
@@ -90,7 +87,6 @@ public class FileUploadService implements UploadFileUseCase {
             .status(FileMetadata.FileStatus.ACTIVE)
             .build();
         
-        // 8. Create file aggregate
         FileAggregate fileAggregate = FileAggregate.builder()
             .fileId(FileId.generate())
             .metadata(metadata)
@@ -108,7 +104,7 @@ public class FileUploadService implements UploadFileUseCase {
             selectedNode.fileCount() + 1
         );
         
-        log.info("File uploaded successfully: {} to node {}", savedFile.getFileId(), selectedNode.nodeId());
+        log.info("File uploaded successfully: {} to node {}", savedFile.fileId(), selectedNode.nodeId());
         
         return createUploadResult(savedFile, false);
     }
@@ -162,13 +158,13 @@ public class FileUploadService implements UploadFileUseCase {
     
     private FileUploadResult createUploadResult(FileAggregate file, boolean deduplicated) {
         return FileUploadResult.builder()
-            .fileId(file.getFileId())
-            .fileName(file.getMetadata().getFileName())
-            .fileSize(file.getMetadata().getFileSize())
-            .contentType(file.getMetadata().getContentType())
-            .checksum(file.getChecksum().getHash())
+            .fileId(file.fileId())
+            .fileName(file.metadata().getFileName())
+            .fileSize(file.metadata().getFileSize())
+            .contentType(file.metadata().getContentType())
+            .checksum(file.checksum().getHash())
             .storageNodeId(file.getStorageNodeId())
-            .uploadedAt(file.getMetadata().getUploadedAt())
+            .uploadedAt(file.metadata().getUploadedAt())
             .deduplicated(deduplicated)
             .build();
     }

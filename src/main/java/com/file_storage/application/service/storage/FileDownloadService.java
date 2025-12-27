@@ -48,10 +48,10 @@ public class FileDownloadService implements DownloadFileUseCase {
         
         return FileDownloadResult.builder()
             .fileStream(fileStream)
-            .fileName(file.getMetadata().getFileName())
-            .contentType(file.getMetadata().getContentType())
-            .fileSize(file.getMetadata().getFileSize())
-            .checksum(file.getChecksum().getHash())
+            .fileName(file.metadata().getFileName())
+            .contentType(file.metadata().getContentType())
+            .fileSize(file.metadata().getFileSize())
+            .checksum(file.checksum().getHash())
             .build();
     }
     
@@ -93,7 +93,7 @@ public class FileDownloadService implements DownloadFileUseCase {
             throw new RuntimeException("Storage node is not available");
         }
         
-        StorageReference storageRef = file.getStorageReference();
+        StorageReference storageRef = file.storageReference();
         String decryptedPath = encryptionService.decryptPath(
             storageRef.getEncryptedPath(),
             storageRef.getEncryptionKeyRef()

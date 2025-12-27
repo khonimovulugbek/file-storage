@@ -39,7 +39,7 @@ public class ProductionFileController {
             Authentication authentication) {
         
         try {
-            UUID userId = getUserIdFromAuth(authentication);
+            UUID userId = authentication == null ? UUID.randomUUID() : getUserIdFromAuth(authentication);
             
             // Create upload command
             FileUploadCommand command = FileUploadCommand.builder()

@@ -1,8 +1,11 @@
 package com.file_storage.domain.model.storage;
 
+import lombok.Getter;
+
 /**
  * Enum representing supported storage backend types
  */
+@Getter
 public enum StorageType {
     MINIO("MinIO Object Storage"),
     S3("AWS S3"),
@@ -14,7 +17,4 @@ public enum StorageType {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
 }

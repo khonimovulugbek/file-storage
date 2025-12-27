@@ -86,19 +86,11 @@ public class StorageConfiguration {
     }
     
     /**
-     * Node selection strategy
-     */
-    @Bean
-    public NodeSelectionStrategy nodeSelectionStrategy() {
-        return new LeastUsedNodeSelectionStrategy();
-    }
-    
-    /**
      * Storage selection service (domain service)
      */
     @Bean
-    public StorageSelectionService storageSelectionService(NodeSelectionStrategy strategy) {
-        return new StorageSelectionService(strategy);
+    public StorageSelectionService storageSelectionService() {
+        return new StorageSelectionService();
     }
     
     /**

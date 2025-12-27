@@ -34,12 +34,6 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
-minio:
-  endpoint: http://localhost:9000
-  access-key: minioadmin
-  secret-key: minioadmin
-  bucket-name: file-storage
-
 jwt:
   secret: your-secret-key-change-this-in-production-minimum-256-bits
   expiration: 86400000
@@ -54,6 +48,23 @@ logging:
     com.file_storage: DEBUG
     org.springframework.security: DEBUG
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+    filter: true
+    syntaxHighlight:
+      theme: monokai
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
 ---
 spring:
   config:
@@ -67,3 +78,7 @@ spring:
 
 minio:
   endpoint: http://localhost:9000
+
+# Encryption configuration
+encryption:
+  master-key: "CHANGE_THIS_IN_PRODUCTION_32_CHARS_BASE64_ENCODED_KEY="
