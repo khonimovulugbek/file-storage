@@ -39,7 +39,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	
 	// MinIO
+	implementation 'com.jcraft:jsch:0.1.55'
 	implementation 'io.minio:minio:8.5.7'
+	implementation 'software.amazon.awssdk:s3:2.20.26'
 	
 	// JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
